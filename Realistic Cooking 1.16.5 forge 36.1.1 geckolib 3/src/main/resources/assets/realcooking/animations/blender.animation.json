@@ -1,0 +1,30 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.blender.bladesSpin": {
+			"loop": true,
+			"animation_length": 0.375,
+			"bones": {
+				"Blades": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.125": {
+							"vector": [0, 90, 0]
+						},
+						"0.25": {
+							"vector": [0, 180, 0]
+						},
+						"0.375": {
+							"vector": [0, 270, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.blender.new": {
+			"loop": true
+		}
+	}
+}
