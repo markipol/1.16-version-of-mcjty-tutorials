@@ -2,10 +2,11 @@
 	"type": "realcooking:thrown",
 	"block": "realcooking:blender",
 	"input": {
-		"item": "minecraft:coal"
+		"item": "minecraft:oak_planks",
+		"amountGiven": 4
 	},
 	"output": {
-		"item": "minecraft:stick",
-		"count": 2
+		"item": "minecraft:crafting_table",
+		"amountReceived": 1
 	}
 }
