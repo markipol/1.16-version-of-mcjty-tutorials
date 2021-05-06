@@ -8,6 +8,7 @@ import com.markipol.realcooking.common.screens.FirstBlockScreen;
 import com.markipol.realcooking.core.init.BlockInit;
 import com.markipol.realcooking.core.init.ContainerTypesInit;
 import com.markipol.realcooking.core.init.ItemInit;
+import com.markipol.realcooking.core.init.RecipeInit;
 import com.markipol.realcooking.core.init.TileEntityTypesInit;
 
 import net.minecraft.block.Block;
@@ -15,6 +16,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -37,7 +39,8 @@ public class RealCooking
 
     public RealCooking() {
     	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        bus.addListener(this::setup);
+        bus.addGenericListener(IRecipeSerializer.class, RecipeInit::registerRecipes);
        
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         ItemInit.ITEMS.register(bus);

@@ -1,0 +1,11 @@
+{
+	"type": "realcooking:thrown",
+	"block": "realcooking:blender",
+	"input": {
+		"item": "minecraft:coal"
+	},
+	"output": {
+		"item": "minecraft:stick",
+		"count": 2
+	}
+}
