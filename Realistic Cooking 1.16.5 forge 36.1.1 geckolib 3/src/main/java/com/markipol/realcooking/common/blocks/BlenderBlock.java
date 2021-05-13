@@ -5,6 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import com.markipol.realcooking.RealCooking;
 import com.markipol.realcooking.common.tileentities.BlenderTileEntity;
 import com.markipol.realcooking.core.init.TileEntityTypesInit;
+import com.markipol.realcooking.core.network.RealCookingNetwork;
+import com.markipol.realcooking.core.network.message.BlenderAnimationMessage;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -13,6 +15,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -22,6 +26,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class BlenderBlock extends Block{
+	private boolean blockRunning = true;
 	
 
 	
@@ -55,21 +60,32 @@ public class BlenderBlock extends Block{
 	}
 	@SuppressWarnings("deprecation")
 	@Override
-	public ActionResultType use(BlockState p_225533_1_, World worldIn, BlockPos pos,
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos,
 			PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
 		
 		
 		if (!worldIn.isClientSide) {
-			LogManager.getLogger().info("Blender Block Clicked");
+			LogManager.getLogger().info("Blender Block Clicked, POGGGGG");
+			BlenderTileEntity blender;
 			TileEntity tileEntity = worldIn.getBlockEntity(pos);
-			if (tileEntity instanceof BlenderTileEntity) {
-				((BlenderTileEntity) tileEntity).bladesSpinning = !(((BlenderTileEntity) tileEntity).bladesSpinning);
-				
-			}
+			blockRunning = !blockRunning;
+			blender = (BlenderTileEntity) tileEntity;
+			blender.bladesSpinning = blockRunning;
+			
+			
+			
+			
+			RealCookingNetwork.CHANNEL.sendToServer(new BlenderAnimationMessage(blockRunning,pos));
+			
+
 		}
 		
-		return ActionResultType.SUCCESS;
-	}
+		return ActionResultType.SUCCESS;}
+		@Override
+		protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+			
+			builder.add(BlockStateProperties.FACING, BlockStateProperties.POWERED);
+		}
 
 
 }

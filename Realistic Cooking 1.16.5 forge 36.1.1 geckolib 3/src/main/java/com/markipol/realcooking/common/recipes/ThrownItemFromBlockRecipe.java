@@ -1,5 +1,7 @@
 package com.markipol.realcooking.common.recipes;
 
+import java.util.UUID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +20,13 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -38,9 +44,10 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 	private final int amountGiven;
 
 	private final int amountReceived;
+	private final ResourceLocation inputTagRL;
 
 	public ThrownItemFromBlockRecipe(ResourceLocation id, Ingredient input, ItemStack output, Block block,
-			int amountGiven, int amountReceived, Item outputItem) {
+			int amountGiven, int amountReceived, Item outputItem, ResourceLocation inputTagRL) {
 		this.output = output;
 		this.input = input;
 		this.block = block;
@@ -48,12 +55,27 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 		this.outputItem = outputItem;
 		this.amountGiven = amountGiven;
 		this.amountReceived = amountReceived;
+		this.inputTagRL = inputTagRL;
 
 	}
 
 	@Override
 	public boolean matches(IInventory inv, World world) {
-		return this.input.test(inv.getItem(0));
+		final boolean match = ItemTags.getAllTags().getTag(this.inputTagRL).contains(inv.getItem(0).getItem());
+		LOGGER.info(inputTagRL.toString());
+//		if (!world.isClientSide) {
+//			ServerWorld SW = (ServerWorld) world;
+//			if (match) {
+//			SW.getRandomPlayer().sendMessage(new StringTextComponent("True: Item matches"), Util.NIL_UUID);
+//			} else {
+//				SW.getRandomPlayer().sendMessage(new StringTextComponent("False: not matching"), Util.NIL_UUID);
+//				
+//			}
+//		}
+
+		
+		return match;
+		//return this.input.test(inv.getItem(0));
 	}
 
 	@Override
@@ -93,7 +115,19 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 		return this.output.copy();
 	}
 
-	public boolean isValid(ItemStack input, Block block) {
+	public boolean isValid(ItemStack input, Block block, World world) {
+		final boolean match = ItemTags.getAllTags().getTag(this.inputTagRL).contains(input.getItem());
+		LOGGER.info(match);
+//		if (!world.isClientSide) {
+//			ServerWorld SW = (ServerWorld) world;
+//			if (match) {
+//			SW.getRandomPlayer().sendMessage(new StringTextComponent("True: Item matches"), Util.NIL_UUID);
+//			} else {
+//				SW.getRandomPlayer().sendMessage(new StringTextComponent("False: not matching"), Util.NIL_UUID);
+//				
+//			}
+//		}
+		
 		return this.input.test(input) && block == this.block;
 	}
 
@@ -120,6 +154,7 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 					: JSONUtils.getAsJsonObject(json, "input");
 			final Ingredient input = Ingredient.fromJson(inputEl);
 			final int amountGiven = JSONUtils.getAsJsonObject(json, "input").get("amountGiven").getAsInt();
+			final ResourceLocation inputTagRL = new ResourceLocation(JSONUtils.getAsJsonObject(json, "input").get("tag").getAsString());
 			final ItemStack output = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(json, "output"));
 			final Item outputItem = output.getItem();
 			final int amountReceived = JSONUtils.getAsJsonObject(json, "output").get("amountReceived").getAsInt();
@@ -129,13 +164,14 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 				throw new IllegalStateException("Block does not exist.");
 			} else {
 				return new ThrownItemFromBlockRecipe(recipeId, input, output, block, amountGiven, amountReceived,
-						outputItem);
+						outputItem, inputTagRL);
 
 			}
 		}
 
 		@Override
 		public ThrownItemFromBlockRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+			final ResourceLocation inputTagRL = buffer.readResourceLocation();
 			LOGGER.info("Buffer Read Index: " + buffer.readerIndex());
 			final Block block = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
 			LOGGER.info("Buffer Read Index: " + buffer.readerIndex());
@@ -153,7 +189,7 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 				throw new IllegalStateException("Block does not exist.");
 			} else {
 				return new ThrownItemFromBlockRecipe(recipeId, input, output, block, amountGiven, amountReceived,
-						outputItem);
+						outputItem, inputTagRL);
 
 			}
 		}
@@ -171,6 +207,7 @@ public class ThrownItemFromBlockRecipe implements IRecipe<IInventory> {
 			LOGGER.info("Buffer W Index: " + buffer.writerIndex());
 			buffer.writeResourceLocation(recipe.block.getRegistryName());
 			LOGGER.info("Buffer W Index: " + buffer.writerIndex());
+			buffer.writeResourceLocation(recipe.inputTagRL);
 
 		}
 

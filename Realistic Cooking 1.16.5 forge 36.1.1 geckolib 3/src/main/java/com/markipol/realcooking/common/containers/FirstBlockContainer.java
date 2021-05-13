@@ -13,7 +13,9 @@ import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.IntReferenceHolder;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -36,7 +38,11 @@ public class FirstBlockContainer extends Container {
 		if (tileEntity != null) {
 			tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
 				addSlot(new SlotItemHandler(h, 0, 64, 24));
+				addSlot(new SlotItemHandler(h, 1, 84, 24));
+				player.sendMessage(new StringTextComponent(Integer.toString(h.getSlots())), Util.NIL_UUID);
 			});
+
+			
 		}
 		layoutPlayerInventorySlots(10, 70);
 		trackPower();

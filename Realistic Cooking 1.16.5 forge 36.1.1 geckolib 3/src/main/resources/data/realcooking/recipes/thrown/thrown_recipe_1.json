@@ -2,7 +2,8 @@
 	"type": "realcooking:thrown",
 	"block": "realcooking:blender",
 	"input": {
-		"item": "minecraft:oak_planks",
+		
+		"tag":"minecraft:planks",
 		"amountGiven": 4
 	},
 	"output": {

@@ -1,5 +1,13 @@
 {
 
 	"block.realcooking.blender":"Blender",
-	"item.realcooking.blender":"Blender"
+	"item.realcooking.blender":"Blender",
+	"key.realcooking.boulder_punch":"Boulder Punch",
+	"key.category.realcooking":"Realistic Cooking",
+	
+	"item.minecraft.potion.effect.no_hunger": "Potion of Hunger Pause",
+	"item.minecraft.splash_potion.effect.no_hunger": "Splash Potion of Hunger Pause",
+	"item.minecraft.tipped_arrow.effect.no_hunger": "Arrow of Hunger Pause",
+	"item.minecraft.lingering_potion.effect.no_hunger": "Lingering Potion of Hunger Pause",
+	"effect.realcooking.no_hunger": "Hunger Pause"
 }

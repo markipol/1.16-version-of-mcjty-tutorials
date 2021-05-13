@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import com.markipol.realcooking.common.util.CustomEnergyStorage;
 import com.markipol.realcooking.core.init.Config;
 import com.markipol.realcooking.core.init.TileEntityTypesInit;
@@ -32,7 +31,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class FirstBlockTileEntity extends TileEntity implements ITickableTileEntity {
-	//public World world = this.level;
+	// public World world = this.level;
 	private ItemStackHandler itemHandler = createHandler();
 	private CustomEnergyStorage energyStorage = createEnergy();
 	private int counter;
@@ -67,7 +66,7 @@ public class FirstBlockTileEntity extends TileEntity implements ITickableTileEnt
 	}
 
 	private ItemStackHandler createHandler() {
-		return new ItemStackHandler(1) {
+		return new ItemStackHandler(2) {
 			@Override
 			protected void onContentsChanged(int slot) {
 				setChanged();
@@ -82,8 +81,13 @@ public class FirstBlockTileEntity extends TileEntity implements ITickableTileEnt
 			@Nonnull
 			@Override
 			public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-				if (stack.getItem() != Items.DIAMOND) {
+//				if (stack.getItem() != Items.DIAMOND) {
+//					return stack;
+//				}
+				if (slot==0) {
+					if (stack.getItem() != Items.DIAMOND ||stack.getItem() != Items.CHARCOAL) {
 					return stack;
+				}
 				}
 				return super.insertItem(slot, stack, simulate);
 			}
@@ -115,14 +119,15 @@ public class FirstBlockTileEntity extends TileEntity implements ITickableTileEnt
 				energyStorage.addEnergy(Config.FIRSTBLOCK_GENERATE.get());
 				LOGGER.info("Currently stored energy of First Block at " + Integer.toString(getBlockPos().getX()) + ", "
 						+ Integer.toString(getBlockPos().getY()) + " is "
-						+ Integer.toString(energyStorage.getEnergyStored()));
+						+ Integer.toString(energyStorage.getEnergyStored()) + " Number of slots: "
+						+ Integer.toString(itemHandler.getSlots()));
 			}
 			setChanged();
 		}
 		if (counter <= 0) {
 			ItemStack stack = itemHandler.getStackInSlot(0);
 			if (stack.getItem() == Items.DIAMOND) {
-				itemHandler.extractItem(0, 1, false);
+				// itemHandler.extractItem(0, 1, false);
 				counter = Config.FIRSTBLOCK_TICKS.get();
 				setChanged();
 			}
@@ -138,34 +143,34 @@ public class FirstBlockTileEntity extends TileEntity implements ITickableTileEnt
 
 	private void sendOutPower() {
 		AtomicInteger capacity = new AtomicInteger(energyStorage.getEnergyStored());
+		
 		if (capacity.get() > 0) {
 			for (Direction direction : Direction.values()) {
 				TileEntity te = level.getBlockEntity(getBlockPos().relative(direction));
 				if (te != null) {
 					boolean doContinue = te.getCapability(CapabilityEnergy.ENERGY, direction).map(handler -> {
 						if (handler.canReceive()) {
-							int received = handler.receiveEnergy(Math.min(capacity.get(), Config.FIRSTBLOCK_SEND.get()), false);
+							int received = handler.receiveEnergy(Math.min(capacity.get(), Config.FIRSTBLOCK_SEND.get()),
+									false);
 							capacity.addAndGet(-received);
 							energyStorage.consumeEnergy(received);
 							setChanged();
 							return capacity.get() > 0;
 						} else {
-							return true; 
-							}
-							
+							return true;
 						}
-						
+
+					}
+
 					).orElse(true);
 					if (!doContinue) {
 						return;
 					}
-					}
 				}
-
 			}
-		}
 
-	
+		}
+	}
 
 	@Nonnull
 	@Override

@@ -1,15 +1,28 @@
 package com.markipol.realcooking;
 
+import java.lang.reflect.Field;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.markipol.realcooking.capabilites.foodstats.FoodStatsFactory;
+import com.markipol.realcooking.capabilites.foodstats.FoodStatsStorage;
+import com.markipol.realcooking.capabilites.foodstats.IFoodStats;
+import com.markipol.realcooking.capabilites.frustration.FrustrationLevel;
+import com.markipol.realcooking.capabilites.frustration.FrustrationLevelStorage;
+import com.markipol.realcooking.capabilites.frustration.IFrustrationLevel;
 import com.markipol.realcooking.client.ter.BlenderTileRenderer;
+import com.markipol.realcooking.common.events.CapabilityHandler;
+import com.markipol.realcooking.common.events.PlayerEvents;
 import com.markipol.realcooking.common.screens.FirstBlockScreen;
 import com.markipol.realcooking.core.init.BlockInit;
 import com.markipol.realcooking.core.init.ContainerTypesInit;
 import com.markipol.realcooking.core.init.ItemInit;
+import com.markipol.realcooking.core.init.KeybindsInit;
+import com.markipol.realcooking.core.init.PotionsInit;
 import com.markipol.realcooking.core.init.RecipeInit;
 import com.markipol.realcooking.core.init.TileEntityTypesInit;
+import com.markipol.realcooking.core.network.RealCookingNetwork;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -18,6 +31,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,6 +43,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import software.bernie.geckolib3.GeckoLib;
 
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(RealCooking.MOD_ID)
 public class RealCooking
@@ -36,28 +51,37 @@ public class RealCooking
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "realcooking";
+    public static Field exhaustionLevel;
 
     public RealCooking() {
     	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.addListener(this::setup);
+        bus.addListener(this::commonSetup);
         bus.addGenericListener(IRecipeSerializer.class, RecipeInit::registerRecipes);
        
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        bus.addListener(this::clientSetup);
         ItemInit.ITEMS.register(bus);
         BlockInit.BLOCKS.register(bus);
         TileEntityTypesInit.TILE_ENTITY_TYPE.register(bus);
         ContainerTypesInit.CONTAINER_TYPES.register(bus);
+        PotionsInit.EFFECTS.register(bus);
+        PotionsInit.POTIONS.register(bus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+        MinecraftForge.EVENT_BUS.register(new PlayerEvents());
         GeckoLib.initialize();
     }
 
-    private void setup(final FMLCommonSetupEvent event)
+    private void commonSetup(final FMLCommonSetupEvent event)
     {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        RealCookingNetwork.init();
+        CapabilityManager.INSTANCE.register(IFoodStats.class, new FoodStatsStorage(), new FoodStatsFactory());
+        CapabilityManager.INSTANCE.register(IFrustrationLevel.class, new FrustrationLevelStorage(), FrustrationLevel::new);
+        
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
@@ -65,9 +89,11 @@ public class RealCooking
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().options);
         
         ScreenManager.register(ContainerTypesInit.FIRST_BLOCK_CONTAINER.get(), FirstBlockScreen::new);
+        KeybindsInit.registerKeybindings(event);
         
         ClientRegistry.bindTileEntityRenderer(TileEntityTypesInit.BLENDER_TILE_ENTITY.get(), BlenderTileRenderer::new);
         RenderTypeLookup.setRenderLayer(BlockInit.BLENDER.get(), RenderType.translucent());
+       
         
     }
 

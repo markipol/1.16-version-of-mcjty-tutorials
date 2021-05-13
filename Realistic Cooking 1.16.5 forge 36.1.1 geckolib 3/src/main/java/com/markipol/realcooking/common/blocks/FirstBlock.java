@@ -62,6 +62,7 @@ public class FirstBlock extends Block {
 		return defaultBlockState().setValue(BlockStateProperties.FACING,
 				context.getNearestLookingDirection().getOpposite());
 	}
+	
 
 	@Override
 	public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
@@ -81,6 +82,7 @@ public class FirstBlock extends Block {
 
 				};
 				NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, tileEntity.getBlockPos());
+				
 
 			} else {
 				throw new IllegalStateException("Our named container provider is missing!");
@@ -94,7 +96,6 @@ public class FirstBlock extends Block {
 
 	@Override
 	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-		// TODO Auto-generated method stub
 		
 		builder.add(BlockStateProperties.FACING, BlockStateProperties.POWERED);
 	}

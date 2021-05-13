@@ -42,7 +42,7 @@ public class Config {
 	        FIRSTBLOCK_SEND = SERVER_BUILDER.comment("Power generation to send per tick")
 	                .defineInRange("send", 100, 0, Integer.MAX_VALUE);
 	        FIRSTBLOCK_TICKS = SERVER_BUILDER.comment("Ticks per diamond")
-	                .defineInRange("ticks", 20, 0, Integer.MAX_VALUE);
+	                .defineInRange("ticks", 160, 0, Integer.MAX_VALUE);
 	        SERVER_BUILDER.pop();
 	        
 	    }
