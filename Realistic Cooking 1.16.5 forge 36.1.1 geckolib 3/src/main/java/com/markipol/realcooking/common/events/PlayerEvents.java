@@ -6,8 +6,8 @@ import org.apache.logging.log4j.LogManager;
 
 import com.markipol.realcooking.RealCooking;
 import com.markipol.realcooking.capabilites.foodstats.FoodStatsProvider;
-import com.markipol.realcooking.capabilites.frustration.FrustrationLevelProvider;
-import com.markipol.realcooking.capabilites.frustration.IFrustrationLevel;
+import com.markipol.realcooking.capabilites.frustration.SustenanceProvider;
+import com.markipol.realcooking.capabilites.frustration.ISustenance;
 import com.markipol.realcooking.common.effects.NoHungerEffect;
 import com.markipol.realcooking.common.recipes.ThrownItemFromBlockRecipe;
 import com.markipol.realcooking.common.util.msg;
@@ -51,7 +51,7 @@ public class PlayerEvents {
 	public static final ResourceLocation FRUSTRATION_LEVEL = new ResourceLocation(RealCooking.MOD_ID,
 			"frustration_level");
 	public static int counter;
-	// public static IFrustrationLevel iFrustrationLevel;
+	// public static ISustenance iFrustrationLevel;
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event) {
@@ -61,9 +61,9 @@ public class PlayerEvents {
 			if (counter == 20) {
 				for (EffectInstance effectInstance : player.getActiveEffects()) {
 					if (effectInstance.getEffect() instanceof NoHungerEffect) {
-						LazyOptional<IFrustrationLevel> frustrationCap = player
-								.getCapability(FrustrationLevelProvider.FRUSTRATION_LEVEL);
-						IFrustrationLevel iFrustrationLevel = frustrationCap.orElseThrow(NullPointerException::new);
+						LazyOptional<ISustenance> frustrationCap = player
+								.getCapability(SustenanceProvider.FRUSTRATION_LEVEL);
+						ISustenance iFrustrationLevel = frustrationCap.orElseThrow(NullPointerException::new);
 
 						msg.send(player, "Frustration level: " + iFrustrationLevel.getFrustration());
 						// LogManager.getLogger().info("ITS OVER:" +
@@ -93,8 +93,8 @@ public class PlayerEvents {
 //		if (!(player.getCapability(FoodStatsProvider.STATS_CAP).isPresent())) {
 //			event.addCapability(FOOD_STATS_CAP, new FoodStatsProvider());
 //		}
-//		if (!(player.getCapability(FrustrationLevelProvider.FRUSTRATION_LEVEL).isPresent())) {
-//			event.addCapability(FRUSTRATION_LEVEL, new FrustrationLevelProvider());
+//		if (!(player.getCapability(SustenanceProvider.FRUSTRATION_LEVEL).isPresent())) {
+//			event.addCapability(FRUSTRATION_LEVEL, new SustenanceProvider());
 //		}
 //		LogManager.getLogger().info("Capabilities event fired");
 //
@@ -109,9 +109,9 @@ public class PlayerEvents {
 //		int lvl = foodstats.orElseThrow(() -> new NullPointerException() ).retrieveLevel();
 //		msg.send(player, Integer.toString(lvl));
 //		}
-		LazyOptional<IFrustrationLevel> frustrationCap = player
-				.getCapability(FrustrationLevelProvider.FRUSTRATION_LEVEL);
-		IFrustrationLevel iFrustrationLevel = frustrationCap.orElseThrow(NullPointerException::new);
+		LazyOptional<ISustenance> frustrationCap = player
+				.getCapability(SustenanceProvider.FRUSTRATION_LEVEL);
+		ISustenance iFrustrationLevel = frustrationCap.orElseThrow(NullPointerException::new);
 		player.sendMessage(
 				new StringTextComponent("LOGGED IN AND FRUSTRATION LVL: " + (iFrustrationLevel.getFrustration())),
 				event.getEntity().getUUID());
@@ -166,9 +166,9 @@ public class PlayerEvents {
 				"exhaustionLevel");
 		// player.sendMessage(new StringTextComponent(Float.toString(exhaustionLevel)),
 		// Util.NIL_UUID);
-		// LazyOptional<IFrustrationLevel> frustrationCap =
-		// player.getCapability(FrustrationLevelProvider.FRUSTRATION_LEVEL);
-		// IFrustrationLevel iFrustrationLevel =
+		// LazyOptional<ISustenance> frustrationCap =
+		// player.getCapability(SustenanceProvider.FRUSTRATION_LEVEL);
+		// ISustenance iFrustrationLevel =
 		// frustrationCap.orElseThrow(NullPointerException::new);
 		// player.sendMessage(new StringTextComponent("Welcome, your FRUSTRATION is " +
 		// (iFrustrationLevel.getFrustration())), event.getEntity().getUUID());

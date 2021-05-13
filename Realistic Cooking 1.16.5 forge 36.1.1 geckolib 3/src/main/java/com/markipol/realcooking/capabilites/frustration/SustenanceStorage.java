@@ -6,21 +6,21 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 
-public class FrustrationLevelStorage implements IStorage<IFrustrationLevel>{
+public class SustenanceStorage implements IStorage<ISustenance>{
 
 	@Override
-	public INBT writeNBT(Capability<IFrustrationLevel> capability, IFrustrationLevel instance, Direction side) {
+	public INBT writeNBT(Capability<ISustenance> capability, ISustenance instance, Direction side) {
 		
 		final CompoundNBT cnbt = new CompoundNBT();
-		cnbt.putInt("frustration", instance.getFrustration());
+		cnbt.putInt("frustration", instance.getFoodLevel());
 		return cnbt;
 	}
 
 	@Override
-	public void readNBT(Capability<IFrustrationLevel> capability, IFrustrationLevel instance, Direction side,
+	public void readNBT(Capability<ISustenance> capability, ISustenance instance, Direction side,
 			INBT nbt) {
 		final CompoundNBT cnbt = (CompoundNBT) nbt;
-		instance.setFrustration(cnbt.getInt("frustration"));
+		instance.getFoodLevel(cnbt.getInt("frustration"));
 	}
 	
 

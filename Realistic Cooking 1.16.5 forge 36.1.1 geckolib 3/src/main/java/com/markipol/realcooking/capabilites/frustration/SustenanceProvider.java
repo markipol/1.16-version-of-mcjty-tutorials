@@ -10,10 +10,10 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class FrustrationLevelProvider implements ICapabilitySerializable<CompoundNBT> {
-	@CapabilityInject(IFrustrationLevel.class)
-	public static Capability<IFrustrationLevel> FRUSTRATION_LEVEL = null;
-	private LazyOptional<IFrustrationLevel> instance = LazyOptional.of(FRUSTRATION_LEVEL::getDefaultInstance);
+public class SustenanceProvider implements ICapabilitySerializable<CompoundNBT> {
+	@CapabilityInject(ISustenance.class)
+	public static Capability<ISustenance> FRUSTRATION_LEVEL = null;
+	private LazyOptional<ISustenance> instance = LazyOptional.of(FRUSTRATION_LEVEL::getDefaultInstance);
 
 	@Nonnull
 	@Override

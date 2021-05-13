@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import com.markipol.realcooking.RealCooking;
 import com.markipol.realcooking.capabilites.foodstats.FoodStatsProvider;
 import com.markipol.realcooking.capabilites.foodstats.IFoodStats;
-import com.markipol.realcooking.capabilites.frustration.FrustrationLevelProvider;
+import com.markipol.realcooking.capabilites.frustration.SustenanceProvider;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,8 +31,8 @@ public class CapabilityHandler {
 		 if (! ( player.getCapability(FoodStatsProvider.STATS_CAP).isPresent() )  ){
 		event.addCapability(FOOD_STATS_CAP, new FoodStatsProvider());
 		 }
-		 if (! ( player.getCapability(FrustrationLevelProvider.FRUSTRATION_LEVEL).isPresent() )  ){
-		event.addCapability(FRUSTRATION_LEVEL, new FrustrationLevelProvider());
+		 if (! ( player.getCapability(SustenanceProvider.FRUSTRATION_LEVEL).isPresent() )  ){
+		event.addCapability(FRUSTRATION_LEVEL, new SustenanceProvider());
 		 }
 		 LogManager.getLogger().info("Capabilities event fired");
 		 

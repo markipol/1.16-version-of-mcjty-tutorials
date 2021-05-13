@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 import com.markipol.realcooking.capabilites.foodstats.FoodStatsFactory;
 import com.markipol.realcooking.capabilites.foodstats.FoodStatsStorage;
 import com.markipol.realcooking.capabilites.foodstats.IFoodStats;
-import com.markipol.realcooking.capabilites.frustration.FrustrationLevel;
-import com.markipol.realcooking.capabilites.frustration.FrustrationLevelStorage;
-import com.markipol.realcooking.capabilites.frustration.IFrustrationLevel;
+import com.markipol.realcooking.capabilites.frustration.Sustenance;
+import com.markipol.realcooking.capabilites.frustration.SustenanceStorage;
+import com.markipol.realcooking.capabilites.frustration.ISustenance;
 import com.markipol.realcooking.client.ter.BlenderTileRenderer;
 import com.markipol.realcooking.common.events.CapabilityHandler;
 import com.markipol.realcooking.common.events.PlayerEvents;
@@ -80,7 +80,7 @@ public class RealCooking
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
         RealCookingNetwork.init();
         CapabilityManager.INSTANCE.register(IFoodStats.class, new FoodStatsStorage(), new FoodStatsFactory());
-        CapabilityManager.INSTANCE.register(IFrustrationLevel.class, new FrustrationLevelStorage(), FrustrationLevel::new);
+        CapabilityManager.INSTANCE.register(ISustenance.class, new SustenanceStorage(), Sustenance::new);
         
     }
 
